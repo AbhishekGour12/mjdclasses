@@ -89,7 +89,7 @@ export default function Navbar() {
     className="w-[160px] sm:w-[260px] h-[50px] object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
     priority
   />
-<div>hii</div>
+
 
 </div>
 
@@ -102,7 +102,7 @@ export default function Navbar() {
               className="nav-link group flex items-center space-x-3 transition-all duration-200 hover:text-purple-900 hover:font-semibold px-4 py-2 rounded-lg hover:bg-purple-50 min-w-[120px] justify-center"
             >
               <FaHouseUser className="text-lg group-hover:scale-110 transition-transform" />
-              <span className="whitespace-nowrap">Homehj</span>
+              <span className="whitespace-nowrap">Home</span>
             </Link>
             
             <Link 
