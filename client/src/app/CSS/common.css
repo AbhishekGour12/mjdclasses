@@ -1,0 +1,89 @@
+/* /styles/navbar.css ya /components/navbar.css */
+
+/* Navbar CSS */
+.navbar {
+    width: 100%;
+    height: 70px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    position: fixed;
+    top: 0;
+}
+
+.logo {
+    
+    max-width: 60px;
+}
+
+/* Aapke original CSS me logo img ki max-height 
+  do baar define thi (30px aur 60px). 
+  Maine 60px rakha hai, aap change kar sakte hain.
+*/
+.logo>img {
+    max-height: 80px;
+}
+
+.fa:hover {
+    cursor: pointer;
+}
+
+.group:hover {
+    font-weight: 500;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-clear-button,
+input[type="password"]::-webkit-inner-spin-button,
+input[type="password"]::-webkit-textfield-decoration-container {
+    display: none !important;
+    visibility: hidden;
+}
+
+/* Yeh @media rule aapki CSS me thi but aapke HTML me 
+  .nav-items class use nahi ho rahi hai. 
+  Aap Tailwind ki responsive classes (max-xl:hidden) 
+  use kar rahe hain, jo ki sahi hai. 
+  Main ise comment out kar raha hoon kyunki yeh shayad unused hai.
+*/
+@media(max-width:624px) {
+    .nav-items {
+        display: none;
+    }
+
+    .navbar {
+        height: 60px;
+    }
+
+    .logo {
+        width: 130px;
+    }
+
+    .logo>img {
+        max-height: 70px;
+    }
+}
+#sidebar {
+    width: 250px;
+   
+}
+.sidebar{
+     margin-left: 100%;
+    animation: slide-right 0.3s forwards;
+
+
+
+}
+
+@keyframes slide-right {
+    0%{
+        transform: translateX(0px);
+    }
+    100%{
+        transform: translateX(-250px);
+    }
+    
+}
