@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { videoAPI } from "@/app/lib/Video";
+import { videoAPI } from "../lib/video";
 import toast from "react-hot-toast";
 
 export const useVideoFilter = (initialFilters = {}) => {

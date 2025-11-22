@@ -12,8 +12,8 @@ import {
   FaBook,
 } from "react-icons/fa";
 import VideoForm from "./VideoForm";
-import { useVideoFilter } from "@/app/lib/useVideoFilter";
-import { videoAPI } from "@/app/lib/Video";
+import { useVideoFilter } from "../../lib/useVideoFilter";
+import { videoAPI } from "../../lib/video.js";
 import io  from 'socket.io-client';
 
 

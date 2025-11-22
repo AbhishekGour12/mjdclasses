@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPlus, FaEdit, FaTrash, FaCalendarAlt, FaUsers, FaBook } from "react-icons/fa";
 import ClassForm from "./ClassForm";
-import { classAPI } from "@/app/lib/class";
+import { classAPI } from "../../lib/class";
 import toast from "react-hot-toast";
 
 export default function ClassesManagement() {

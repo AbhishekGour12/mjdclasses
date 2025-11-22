@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { classAPI } from "@/app/lib/class";
-import { videoAPI } from "@/app/lib/Video";
+import { classAPI } from "../../lib/class";
+import { videoAPI } from "../../lib/video";
 import toast from "react-hot-toast";
 
 export default function VideoForm({ editingVideo, onSave, onCancel}) {
