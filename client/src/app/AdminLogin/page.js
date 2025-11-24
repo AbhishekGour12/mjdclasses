@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
 
   try {
     // API call to backend
-    const response = await axios.post("http://localhost:5000/api/admin/signin", {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/signin`, {
       email: formData.email,
       password: formData.password,
       role: "admin"

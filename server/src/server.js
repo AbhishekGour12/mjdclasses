@@ -56,7 +56,7 @@ app.use((req, res, next) => {
 });
 app.use(
   "/uploads",
-  express.static(path.join(process.cwd(), "uploads"))
+  express.static(path.join(process.cwd(), "src/uploads"))
 );
 // ROUTES
 app.use("/api/auth", authRoutes);
