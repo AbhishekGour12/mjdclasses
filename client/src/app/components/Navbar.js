@@ -53,7 +53,7 @@ export default function Navbar() {
       email: user.user.email,
       date: new Date().toISOString()
     }
-   const res = await authAPI.attendanceLogout(data);
+   //const res = await authAPI.attendanceLogout(data);
     localStorage.removeItem('token');
     dispatch(loginSuccess(""));
     closeMenu();

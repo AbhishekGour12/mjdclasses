@@ -20,6 +20,7 @@ import Navbar from "../components/Navbar";
 
 const CoursePage = () => {
    const user = useSelector((state) => state.auth.user);
+   console.log(user)
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,6 +28,12 @@ const CoursePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 const [loading, setLoading] = useState(user?.classes ? true : false);
 
+useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  script.async = true;
+  document.body.appendChild(script);
+}, []);
 
 
   const lectureRef = useRef();
@@ -78,6 +85,55 @@ const [loading, setLoading] = useState(user?.classes ? true : false);
     return match && match[2].length === 11 ? match[2] : null;
   };
 
+  const payNow = async () => {
+  try {
+    const orderRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payment/order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user._id }),
+    });
+
+    const { order } = await orderRes.json();
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RZP_KEY,
+      amount: order.amount,
+      currency: "INR",
+      name: "MJD Classes",
+      description: "Course subscription",
+      order_id: order.id,
+      handler: async function (response) {
+        const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payment/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            order_id: order.id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            userId: user._id
+          }),
+        });
+
+        const data = await verifyRes.json();
+        if (data.success) {
+          alert("Payment Successful!");
+          window.location.reload();
+        }
+      },
+      prefill: {
+        name: user?.name,
+        email: user?.email,
+      },
+      theme: { color: "#8b5cf6" },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (error) {
+    console.log("Payment error:", error);
+  }
+};
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen">
@@ -94,6 +150,19 @@ const [loading, setLoading] = useState(user?.classes ? true : false);
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       <Navbar />
+      {!user?.payment ? (
+  <div className="text-center py-20">
+    <h2 className="text-2xl font-bold text-gray-700 mb-4">
+      You must subscribe to access the course.
+    </h2>
+    <button
+      onClick={payNow}
+      className="bg-purple-600 text-white px-6 py-3 rounded-xl text-lg shadow-md hover:bg-purple-700"
+    >
+      Pay ₹1000 & Continue
+    </button>
+  </div>
+) : (
       <div className="container mx-auto px-4 py-8 mt-16">
         {/* Header */}
         <motion.h1
@@ -266,6 +335,7 @@ const [loading, setLoading] = useState(user?.classes ? true : false);
           )}
         </AnimatePresence>
       </div>
+)}
     </div>
   );
 };

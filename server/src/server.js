@@ -11,6 +11,7 @@ import http from "http";
 import { Server } from "socket.io";
 import dashboardRoutes from "./routes/DashboardRoutes.js";
 import adminRoutes from "./routes/AdminRoutes.js";
+import paymentRoutes from "./routes/PaymentRoutes.js"
 import path from "path";
 
 const app = express();
@@ -64,8 +65,7 @@ app.use("/api/classes", classRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
-
-
+app.use("/api/payment", paymentRoutes)
 
 // Server listen
 server.listen(process.env.PORT || 5000, () => {

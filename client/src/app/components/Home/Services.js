@@ -1,78 +1,137 @@
-import React from 'react'
-import { FaPaintBrush, FaLaptopCode, FaChartLine } from 'react-icons/fa';
-const services = [
-  {
-    id: 1,
-    title: "Interactive Classes",
-    description:
-      "Engaging lessons designed to make learning fun and effective for every student.",
-    icon: <FaPaintBrush className="text-purple-500 text-2xl" />,
-  },
-  {
-    id: 2,
-    title: "Expert Teachers",
-    description:
-      "Highly qualified instructors dedicated to personalized attention and growth.",
-    icon: <FaLaptopCode className='text-2xl text-purple-500'/>,
-  },
-  {
-    id: 3,
-    title: "Modern Learning Tools",
-    description:
-      "Smart boards, visual aids, and digital resources for better understanding.",
-    icon: <FaChartLine className="text-purple-500 text-2xl" />,
-  },
-];
-const Services = () => {
+import React from "react";
+import { FaPaintBrush, FaLaptopCode, FaChartLine, FaRocket } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+
+const AnimatedServiceCard = ({ service, index }) => {
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.15 });
+
   return (
-    <section className="max-w-6xl mx-auto px-4 py-16 text-center ">
-      {/* Header */}
-      <p className="text-purple-500 text-xl font-medium">Our Services</p>
-      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 max-w-4xl text-center mx-auto mt-2">
-        Fostering a playful & engaging learning environment
-      </h1>
-      {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-        {services.map((service) => (
-          <div
-            key={service.id}
-            className="bg-white rounded-2xl p-8 text-left shadow-md transition-all duration-500 hover:bg-purple-400 hover:text-white hover:translate-y-2 hover:shadow-xl"
-          >
-            {/* Icon */}
-            <div
-              className="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-purple-100 transition-all duration-500  group-hover:bg-white"
-            >
-              {service.icon}
-            </div>
-            {/* Content */}
-            <h3
-              className="text-xl font-semibold "
-            >
-              {service.title}
-            </h3>
-            <p
-              className="mt-2 text-sm leading-relaxed"
-            >
-              {service.description}
-            </p>
-            {/* Learn More */}
-            <button
-              className={`flex items-center gap-2 mt-6 text-sm font-medium ${
-                service.active ? "text-white" : "text-purple-900"
-              }`}
-            >
-              Learn More →
-            </button>
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 60, scale: 0.95 }}
+      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.2 }}
+      whileHover={{
+        scale: 1.05,
+        y: -8,
+        transition: { duration: 0.3 },
+      }}
+      className="group relative"
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-3xl blur-lg opacity-0 group-hover:opacity-80 transition-all duration-500"></div>
+
+      <div className="relative bg-white rounded-3xl px-6 py-10 shadow-lg hover:shadow-2xl transition-all duration-500 border border-purple-100 group-hover:border-purple-400 flex flex-col items-start md:min-h-[360px]">
+        
+        {/* Icon */}
+        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-500 flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-500">
+          {service.icon}
+        </div>
+
+        {/* Title */}
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 group-hover:text-purple-700 transition-colors duration-300">
+          {service.title}
+        </h3>
+
+        {/* Description */}
+        <p className="text-gray-600 text-sm sm:text-base leading-relaxed flex-grow">
+          {service.description}
+        </p>
+
+        {/* Discover CTA */}
+        <div className="mt-6 pt-3 border-t border-gray-200 w-full">
+          <div className="flex items-center text-purple-600 font-semibold group-hover:translate-x-2 transition-all duration-300 text-sm sm:text-base">
+            Discover More <FaRocket className="ml-2 group-hover:rotate-45 transition-transform duration-300" />
           </div>
-        ))}
+        </div>
       </div>
-      {/* Dots */}
-      <div className="flex justify-center mt-10 gap-2">
-        <span className="w-3 h-1 rounded-full bg-purple-400"></span>
-        <span className="w-3 h-1 rounded-full bg-gray-300"></span>
-        <span className="w-3 h-1 rounded-full bg-gray-300"></span>
+    </motion.div>
+  );
+};
+
+const Services = () => {
+  const services = [
+    {
+      id: 1,
+      title: "Interactive Classes",
+      description:
+        "Live sessions, quizzes & doubt-solving that make learning exciting, result-driven & highly engaging 📚✨",
+      icon: <FaPaintBrush className="text-white text-2xl sm:text-3xl" />,
+    },
+    {
+      id: 2,
+      title: "Expert Teachers",
+      description:
+        "Personal guidance from experienced educators focused on boosting confidence & academic excellence 👨‍🏫💡",
+      icon: <FaLaptopCode className="text-white text-2xl sm:text-3xl" />,
+    },
+    {
+      id: 3,
+      title: "Smart Study Techniques",
+      description:
+        "AI-based analytics, performance tracking & visual learning tools for faster improvement & better results 🚀🔍",
+      icon: <FaChartLine className="text-white text-2xl sm:text-3xl" />,
+    },
+  ];
+
+  return (
+    <section className="py-16 sm:py-20 bg-gradient-to-b from-white to-purple-100 relative overflow-hidden">
+      
+      {/* Soft Decorative Glows */}
+      <div className="absolute top-10 left-0 w-56 h-56 bg-purple-300/30 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-10 right-0 w-80 h-80 bg-blue-300/30 rounded-full blur-3xl"></div>
+
+      <div className="container mx-auto px-4 relative z-10 max-w-7xl">
+        
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-14"
+        >
+          <span className="text-purple-600 text-sm sm:text-base font-semibold bg-purple-200 px-4 py-2 rounded-full">
+            Our Services
+          </span>
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mt-5 leading-tight">
+            We Make Learning <span className="text-purple-600">Smarter & Fun</span> 🚀
+          </h1>
+
+          <p className="text-gray-700 text-sm sm:text-lg max-w-3xl mx-auto mt-4">
+            Experience a new era of teaching designed to build strong concepts, powerful results & confident students.
+          </p>
+        </motion.div>
+
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-10">
+          {services.map((service, index) => (
+            <AnimatedServiceCard key={service.id} service={service} index={index} />
+          ))}
+        </div>
+
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-16 sm:mt-20 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center"
+        >
+          {[
+            { number: "2K+", label: "Happy Students" },
+            { number: "25+", label: "Experienced Teachers" },
+            { number: "95%", label: "Success Rate" },
+            { number: "24/7", label: "Support System" },
+          ].map((stat, index) => (
+            <div key={index}>
+              <div className="text-2xl sm:text-4xl font-bold text-purple-700">{stat.number}</div>
+              <div className="text-gray-700 text-sm sm:text-base">{stat.label}</div>
+            </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
 };
+
 export default Services;
