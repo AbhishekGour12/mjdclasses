@@ -24,8 +24,8 @@ export const createOrder = async (req, res) => {
 // Verify payment & update user
 export const verifyPayment = async (req, res) => {
   const { order_id, razorpay_payment_id, razorpay_signature, userId } = req.body;
-
-  const hmac = crypto.createHmac("sha256", process.env.RZP_SECRET);
+try{
+  const hmac = crypto.createHmac("sha256", process.env.RZP_SECRET || "J75TL5ody2B0pUVaBpyRINRC" );
   hmac.update(order_id + "|" + razorpay_payment_id);
   const calculatedSignature = hmac.digest("hex");
 
@@ -35,5 +35,9 @@ export const verifyPayment = async (req, res) => {
     res.json({ success: true, message: "Payment Verified" });
   } else {
     res.status(400).json({ success: false, message: "Invalid Signature" });
+    
   }
+}catch(err){
+  console.log(err.message)
+}
 };

@@ -87,6 +87,7 @@ useEffect(() => {
 
   const payNow = async () => {
   try {
+
     const orderRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payment/order`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -130,7 +131,7 @@ useEffect(() => {
     const rzp = new window.Razorpay(options);
     rzp.open();
   } catch (error) {
-    console.log("Payment error:", error);
+    console.log("Payment error:", error.message);
   }
 };
 
