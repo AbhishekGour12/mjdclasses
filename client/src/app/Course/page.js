@@ -33,6 +33,7 @@ useEffect(() => {
   script.src = "https://checkout.razorpay.com/v1/checkout.js";
   script.async = true;
   document.body.appendChild(script);
+  console.log(process.env.NEXT_PUBLIC_API_URL)
 }, []);
 
 
@@ -93,7 +94,7 @@ useEffect(() => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: user._id }),
     });
-
+   console.log(orderRes)
     const { order } = await orderRes.json();
 
     const options = {
