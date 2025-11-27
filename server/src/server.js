@@ -13,6 +13,7 @@ import dashboardRoutes from "./routes/DashboardRoutes.js";
 import adminRoutes from "./routes/AdminRoutes.js";
 import paymentRoutes from "./routes/PaymentRoutes.js"
 import path from "path";
+import { dailyAttendanceJob, weeklyAttendanceJob } from "./cron/attendanceCron.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -49,7 +50,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 connectDB();
-
 // Socket.io add in req
 app.use((req, res, next) => {
   req.io = io;
@@ -67,6 +67,11 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/payment", paymentRoutes)
 
+//daly Attendance update
+ dailyAttendanceJob()
+
+//WeeklyAttendance update
+weeklyAttendanceJob()
 // Server listen
 server.listen(process.env.PORT || 5000, () => {
   console.log(`listen port ${process.env.PORT}`);

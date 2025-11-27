@@ -58,14 +58,14 @@ export const registerAdmin = async (req, res) => {
 export const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    
     // Check all fields
     if (!email || !password) {
       return res.status(400).json({ message: "Email & Password are required" });
     }
 
     // Check if user exists
-    const user = await Admin.findOne({ email });
+    const user = await Admin.findOne({ email:email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
