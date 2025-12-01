@@ -83,7 +83,7 @@ export const loginAdmin = async (req, res) => {
         email: user.email,
         role: user.role,
       },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || "123456",
       { expiresIn: "7d" }
     );
 

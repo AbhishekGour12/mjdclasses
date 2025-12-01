@@ -3,101 +3,97 @@ import StudentModel from "../model/Student.js";
 import AttendanceModel from "../model/Attendance.js";
 
 // 🕛 Run every day at 12:00 AM
+const normalizeDate = (date) => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
 export const dailyAttendanceJob = () => {
-  cron.schedule("0 0 * * *", async () => {
-    console.log("📅 Running daily attendance cron job...");
+  cron.schedule(
+    "5 0 * * *", // Runs at 12:05 AM IST
+    async () => {
+      console.log("📅 Running DAILY attendance cron...");
 
-    try {
-      // Normalize date -> 00:00:00
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      try {
+        const today = normalizeDate(new Date());
+        const students = await StudentModel.find();
 
-      const students = await StudentModel.find();
-
-      for (const student of students) {
-        
-        // Check if attendance already created (Present/Absent)
-        const existing = await AttendanceModel.findOne({
-          student: student._id,
-          date: today
-        });
-
-        if (!existing) {
-          // Student never logged in => Mark Absent
-          await AttendanceModel.create({
+        for (const student of students) {
+          // Check if today's attendance exists
+          const existing = await AttendanceModel.findOne({
             student: student._id,
-            grade: student.grade,
-            name: student.name,
             date: today,
-            status: "Absent",
-            loginTime: null,
-            logoutTime: null,
-            duration: "0 minutes",
           });
+
+          // If no login then mark ABSENT
+          if (!existing) {
+            await AttendanceModel.create({
+              student: student._id,
+              grade: student.grade,
+              name: student.name,
+              date: today,
+              status: "Absent",
+              loginTime: null,
+              logoutTime: null,
+              duration: "0 minutes",
+            });
+          }
         }
 
-        // Now update attendance statistics
-        const totalDays = await AttendanceModel.countDocuments({
-          student: student._id
-        });
-
-        const totalPresent = await AttendanceModel.countDocuments({
-          student: student._id,
-          status: "Present"
-        });
-
-        const attendancePercentage =
-          totalDays === 0 ? 0 : (totalPresent / totalDays) * 100;
-
-        await StudentModel.findByIdAndUpdate(student._id, {
-          totalDays,
-          totalPresent,
-          attendancePercentage
-        });
+        console.log("✅ Daily attendance cron completed.");
+      } catch (err) {
+        console.error("❌ Daily cron error:", err);
       }
-
-      console.log("✅ Daily attendance job completed successfully.");
-    } catch (error) {
-      console.error("❌ Cron job error:", error);
+    },
+    {
+      scheduled: true,
+      timezone: "Asia/Kolkata",
     }
-  });
+  );
 };
 
 
+export const weeklyAttendanceJob = () => {
+  cron.schedule(
+    "0 1 * * 1", // every Monday 1AM IST
+    async () => {
+      console.log("📊 Running WEEKLY attendance cron...");
 
-export const weeklyAttendanceJob = () =>{
-// Weekly Cron Job: runs every Monday at 1 AM
-cron.schedule("0 1 * * 1", async () => {
-  console.log("Weekly attendance percentage calculation started...");
+      try {
+        const students = await StudentModel.find();
+        const today = normalizeDate(new Date());
 
-  try {
-    const students = await StudentModel.find();
+        for (const student of students) {
+          const joinDate = normalizeDate(student.joinDate);
+          const diffTime = Math.abs(today - joinDate);
+          const totalPossibleDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    // 365 days range
-    const today = new Date();
-    const past365 = new Date(today);
-    past365.setDate(today.getDate() - 365);
+          const presentCount = await AttendanceModel.countDocuments({
+            student: student._id,
+            status: "Present",
+            date: { $gte: joinDate, $lte: today },
+          });
 
-    for (const student of students) {
-      // Count how many PRESENT days in last 365 days
-      const presentCount = await AttendanceModel.countDocuments({
-        student: student._id,
-        status: "Present",
-        date: { $gte: past365, $lte: today }
-      });
+          const attendancePercentage =
+            (presentCount / totalPossibleDays) * 100;
 
-      // Fixed denominator = 365 days
-      const attendancePercentage = (presentCount / 365) * 100;
+          await StudentModel.findByIdAndUpdate(student._id, {
+            totalPresent: presentCount,
+            totalDays: totalPossibleDays,
+            attendancePercentage: attendancePercentage.toFixed(2),
+          });
+        }
 
-      student.totalPresent = presentCount;
-      student.attendancePercentage = attendancePercentage.toFixed(2);
-
-      await student.save();
+        console.log("✅ Weekly attendance update completed.");
+      } catch (error) {
+        console.error("❌ Weekly cron error:", error);
+      }
+    },
+    {
+      scheduled: true,
+      timezone: "Asia/Kolkata",
     }
+  );
+};
 
-    console.log("Weekly attendance update completed successfully.");
-  } catch (error) {
-    console.error("Error updating weekly attendance:", error);
-  }
-});
-}

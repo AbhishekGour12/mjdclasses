@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/", addClass);
 router.get("/", getAllClasses);
 router.get("/:id", getClassById);
-router.get("/grade/:grade", protect, getClassByGrade);  // ✅ <-- ADD THIS ROUTE
+router.get("/grade/:grade", getClassByGrade);  // ✅ <-- ADD THIS ROUTE
 router.put("/:id", updateClass);
 router.delete("/:id", deleteClass);
 

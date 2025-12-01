@@ -11,6 +11,7 @@ export const useVideoFilter = (initialFilters = {}) => {
     try {
       setLoading(true);
       const res = await videoAPI.getAllVideos(customFilters);
+      console.log(res.data)
       setVideos(res.data || []);
     } catch (err) {
       console.error("Error fetching videos:", err);

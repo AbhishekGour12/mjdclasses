@@ -2,7 +2,8 @@ import VideoModel from "../model/Video.js";
 import ClassModel from "../model/Class.js";
 import Video from "../model/Video.js";
 
-// Add video
+import axios from "axios";
+
 export const addVideo = async (req, res) => {
   try {
     const { title, classId, subject, youtubeLink, description, isFeatured } = req.body;
@@ -14,23 +15,64 @@ export const addVideo = async (req, res) => {
       return res.status(400).json({ message: "Invalid subject for selected class" });
     }
 
+    // Extract YouTube video ID
+    const videoId = extractVideoId(youtubeLink);
+    if (!videoId)
+      return res.status(400).json({ message: "Invalid YouTube link" });
+
+    // Fetch YouTube Data
+    const API_KEY = process.env.YOUTUBE_KEY || "AIzaSyBxLbeyEcwu9SSMDLpjO2twM8gnMnN0Tmw";
+    const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${videoId}&key=${API_KEY}`;
+
+    const { data } = await axios.get(apiUrl);
+    if (!data.items.length)
+      return res.status(400).json({ message: "Video details not found on YouTube" });
+
+    const videoInfo = data.items[0];
+
+    // Convert ISO 8601 duration → mm:ss
+    const isoDuration = videoInfo.contentDetails.duration;
+    const duration = convertYouTubeDuration(isoDuration);
+
+    const views = parseInt(videoInfo.statistics.viewCount || 0);
+
     const newVideo = new VideoModel({
-      title,
+      title: title || videoInfo.snippet.title,
       classId,
       subject,
       youtubeLink,
-      description,
-      duration: `${Math.floor(Math.random() * 60)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-      views: Math.floor(Math.random() * 2000),
-      isFeatured
+      description: description || videoInfo.snippet.description,
+      duration,
+      views,
+      isFeatured,
+      thumbnail: videoInfo.snippet.thumbnails.high.url,
     });
 
     await newVideo.save();
+
     res.status(201).json({ message: "Video added successfully", data: newVideo });
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Error adding video", error });
   }
 };
+
+// Extract video ID
+const extractVideoId = (url) => {
+  const regex = /(?:v=|\.be\/)([A-Za-z0-9_-]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+};
+
+// Convert ISO 8601 → mm:ss
+const convertYouTubeDuration = (iso) => {
+  const match = iso.match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
+  const minutes = parseInt(match[1] || 0);
+  const seconds = parseInt(match[2] || 0);
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
+
 
 /// ✅ Get all videos with optional filters
 export const getAllVideos = async (req, res) => {

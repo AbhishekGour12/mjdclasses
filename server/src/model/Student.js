@@ -14,6 +14,11 @@ const studentSchema = new mongoose.Schema(
     totalDays: { type: Number, default: 0 },
     lastLogin: { type: Date },
     lastPingTime: { type: Date, default: null },
+    joinDate: {
+  type: Date,
+  default: Date.now
+}
+
   },
   { timestamps: true }
 );

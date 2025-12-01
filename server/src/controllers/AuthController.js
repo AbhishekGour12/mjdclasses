@@ -117,17 +117,37 @@ const registerUser = async (req, res) => {
         await existingAttendance.save();
 
         // Update student stats
-        student.lastLogin = new Date();
-        student.lastPingTime = new Date();
-        student.totalDays = await Attendance.countDocuments({ student: student._id });
-        student.totalPresent = await Attendance.countDocuments({
-          student: student._id,
-          status: "Present"
-        });
-        student.attendancePercentage =
-          (student.totalPresent / student.totalDays) * 100;
+student.lastLogin = new Date();
+student.lastPingTime = new Date();
 
-        await student.save();
+// ===== Calculate attendance from JOIN DATE =====
+
+// Student join date
+const joinDate = new Date(student.joinDate);
+joinDate.setHours(0, 0, 0, 0);
+
+// Today date normalized
+const todayDate = new Date();
+todayDate.setHours(0, 0, 0, 0);
+
+// Calculate day difference
+const diffTime = Math.abs(todayDate - joinDate);
+const totalPossibleDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
+
+// Count PRESENT days in DB
+student.totalPresent = await Attendance.countDocuments({
+  student: student._id,
+  status: "Present",
+});
+
+// Final percentage based on JOIN DATE
+student.attendancePercentage = 
+  (student.totalPresent / totalPossibleDays) * 100;
+
+// Save total possible days also for dashboard
+student.totalDays = totalPossibleDays;
+
+await student.save();
 
         // Emit changes
         io.emit("attendance_updated", await Attendance.find());

@@ -31,7 +31,6 @@ try{
 
   if (calculatedSignature === razorpay_signature) {
    const result =  await User.findByIdAndUpdate(userId, { payment: true });
-  
     res.json({ success: true, message: "Payment Verified" });
   } else {
     res.status(400).json({ success: false, message: "Invalid Signature" });

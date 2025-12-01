@@ -14,12 +14,16 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { classAPI } from "../lib/class";
 import Navbar from "../components/Navbar";
+import { useRouter } from "next/navigation";
+import { authAPI } from "../lib/auth";
+import { loginSuccess } from "../store/features/authSlice";
 
 const CoursePage = () => {
    const user = useSelector((state) => state.auth.user);
+   const dispatch = useDispatch()
    console.log(user)
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -27,30 +31,40 @@ const CoursePage = () => {
   const [videoUrl, setVideoUrl] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 const [loading, setLoading] = useState(user?.classes ? true : false);
+const router = useRouter()
 
-useEffect(() => {
-  const script = document.createElement("script");
-  script.src = "https://checkout.razorpay.com/v1/checkout.js";
-  script.async = true;
-  document.body.appendChild(script);
-  console.log(process.env.NEXT_PUBLIC_API_URL)
-}, []);
+ const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await authAPI.getProfile(token);
 
+        if (res?.user) {
+          console.log('✅ Logged-in user loaded:', res.user);
+          dispatch(loginSuccess(res.user));
+        } else {
+          // If backend didn't send valid user, clear token
+          localStorage.removeItem('token');
+          console.warn('⚠️ Invalid user response, token cleared');
+          router.push('/Login')
+        }
+      } catch (err) {
+        // Detect if token expired or unauthorized
+        const status = err?.response?.status;
+        const backendMsg = err?.response?.data?.message;
+        const msg = backendMsg || err?.message || 'Unknown error';
 
-  const lectureRef = useRef();
+        // 🔹 Handle expired/invalid token
+        if (status === 401 || msg.toLowerCase().includes('expired')) {
+          localStorage.removeItem('token');
+          console.warn('🔒 Token expired — logging out user');
+          toast.error('Session expired. Please log in again.');
+        } else {
+          console.error('❌ Error fetching user profile:', msg);
+        }
+      }
+    };
 
-  useEffect(() => {
-    if (selectedSubject && lectureRef.current) {
-      lectureRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      })
-    }
-  }, [selectedSubject])
- 
-
- useEffect(() => {
-  const fetchData = async () => {
+ const fetchData = async () => {
     try {
       if (!user?.classes) return;
 
@@ -70,6 +84,37 @@ useEffect(() => {
       setLoading(false);
     }
   };
+useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  script.async = true;
+  document.body.appendChild(script);
+  let token = localStorage.getItem("token")
+  if(!token){
+    router.push("/");
+
+
+
+  }
+  fetchData()
+  fetchUser()
+}, []);
+
+
+  const lectureRef = useRef();
+
+  useEffect(() => {
+    if (selectedSubject && lectureRef.current) {
+      lectureRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      })
+    }
+  }, [selectedSubject])
+ 
+
+ useEffect(() => {
+ 
 
   fetchData();
 }, [user]);
@@ -119,7 +164,8 @@ useEffect(() => {
         const data = await verifyRes.json();
         if (data.success) {
           alert("Payment Successful!");
-          window.location.reload();
+         
+    fetchUser();
         }
       },
       prefill: {
@@ -131,6 +177,10 @@ useEffect(() => {
 
     const rzp = new window.Razorpay(options);
     rzp.open();
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    
   } catch (error) {
     console.log("Payment error:", error.message);
   }
