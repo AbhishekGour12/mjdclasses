@@ -105,17 +105,17 @@ export default function Page() {
 
   // RENDER ---------------------------
   return (
-    <div className="flex py-9 max-lg:py-3 sm:px-10 max-sm:px-6 justify-between max-lg:justify-center mt-10 w-[95%] m-auto">
+    <div className="h-screen max-sm:h-[90vh] max-sm:mb-[10vh] flex max-sm:items-center py-9 max-lg:py-3 sm:px-10 max-sm:px-2 justify-between max-lg:justify-center mt-10 w-[95%] m-auto">
 
       <div className="max-lg:hidden flex items-center flex-1 max-w-[650px] h-auto mr-5">
         <Image src="/SignUpImg.svg" alt="Signup" width={700} height={700} className="w-full" />
       </div>
 
-      <div className="max-lg:flex-1 md:max-w-[460px] max-md:max-w-[400px] mx-auto px-2">
+      <div className=" max-lg:flex-1 md:max-w-[500px] max-md:max-w-[400px]  pt-16 max-lg:pt-20 max-sm:pt-0 mx-auto sm:px-2">
 
-        <form onSubmit={handleSubmit} className="lg:max-w-[406px] rounded-2xl lg:pt-6">
+        <form onSubmit={handleSubmit} className="lg:max-w-[406px]  rounded-2xl lg:pt-6 max-md:pt-0">
 
-          <h1 className="mx-12 lg:text-3xl max-md:text-[25px] font-bold text-center text-purple-800 mb-6">
+          <h1 className="mx-12 text-3xl max-lg:text-4xl max-md:text-3xl max-sm:text-[28px] font-bold max-lg:mb-12 text-center text-purple-800 mb-6 ">
             Sign Up And Start Learning
           </h1>
 

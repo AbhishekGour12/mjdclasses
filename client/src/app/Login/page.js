@@ -82,17 +82,17 @@ export default function Page() {
 
   // UI RENDER ----------
   return (
-    <div className="flex py-9 max-lg:py-3 sm:px-10 max-sm:px-6 justify-between max-lg:justify-center mt-10 w-[95%] m-auto">
+    <div className="flex py-9 max-lg:h-[80vh] max-lg:mb-[20vh] lg:h-[90vh] lg:mb-[10vh] items-center max-lg:py-3 sm:px-10 justify-between max-lg:justify-center mt-10 w-[95%] m-auto">
 
       <div className="max-lg:hidden flex items-center flex-1 max-w-[650px] h-auto mr-8">
         <Image src="/SignUpImg.svg" alt="Login" width={700} height={700} className="w-full" />
       </div>
 
-      <div className="max-lg:flex-1 md:max-w-[460px] max-md:max-w-[400px] mx-auto px-2">
+      <div className="max-lg:flex-1 md:max-w-[500px] max-md:max-w-[500px] max-sm:max-w-[400px] mx-auto px-2 max-sm:px-0">
 
-        <form onSubmit={handleSubmit} className="lg:max-w-[430px] rounded-2xl lg:pt-10">
+        <form onSubmit={handleSubmit} className="lg:max-w-[430px] rounded-2xl">
 
-          <h1 className="lg:text-[32px] md:text-[36px] max-md:text-[25px] font-bold text-purple-800 text-center mb-10">
+          <h1 className="lg:text-[32px] md:text-[36px] max-md:text-[28px] max-sm:text-[24px] font-bold text-purple-800 text-center mb-10">
             Log In To Continue Your <br /> Learning Journey
           </h1>
 

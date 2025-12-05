@@ -15,7 +15,7 @@ import io  from 'socket.io-client';
 import { useRouter } from "next/navigation";
 
 
-const socket = io(process.env.NEXT_PUBLIC_API_URL ,{
+const socket = io("https://api.mjdclasses.in" ,{
   transports: ["websocket"],
 })
 // Available grades and subjects
