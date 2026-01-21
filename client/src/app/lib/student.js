@@ -47,7 +47,27 @@ export const studentAPI = {
     }catch(error){
       throw  error.respone?.data || error.message
     }
+  },
+  // Add student manually
+  addStudentManual: async (studentData) => {
+    try {
+      const response = await api.post("/api/admin/add-student-manual", studentData)
+      return response.data;
+    } catch (error) {
+      console.error('Error adding student:', error);
+      throw error;
+    }
+  },
+   addStudentsBulk: async (studentsData) => {
+    try {
+      const response = await api.post(`/api/admin/add-students-bulk`, { students: studentsData },)
+      return response.data;
+    } catch (error) {
+      console.error('Error adding bulk students:', error);
+      throw error;
+    }
   }
+
   
   
 };

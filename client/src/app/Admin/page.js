@@ -13,6 +13,7 @@ import Settings from "../components/Admin/Setting";
 import { studentAPI } from "../lib/student";
 import io  from 'socket.io-client';
 import { useRouter } from "next/navigation";
+import AddStudents from "../components/Admin/AddStudents";
 
 
 const socket = io("https://api.mjdclasses.in" ,{
@@ -219,6 +220,7 @@ export default function AdminPanel() {
     { id: "dashboard", name: "Dashboard", icon: "FaChartLine" },
     { id: "classes", name: "Classes", icon: "FaChalkboardTeacher" },
     { id: "students", name: "Students", icon: "FaUserGraduate" },
+     { id: "add-students", name: "Add Students", icon: "FaUserPlus" }, // New tab
     { id: "attendance", name: "Attendance", icon: "FaCalendarCheck" },
     { id: "videos", name: "Video Lectures", icon: "FaVideo" },
     { id: "website", name: "Website", icon: "FaGlobe" },
@@ -239,6 +241,8 @@ export default function AdminPanel() {
         );
       case "students":
         return <StudentsManagement students={students} classes={classes} />;
+      case "add-students": // New case
+        return <AddStudents classes={classes} onStudentsAdded={handleStudentsAdded} />;
       case "attendance":
         return <AttendanceManagement attendance={attendance} classes={classes} />;
       case "videos":
@@ -256,6 +260,10 @@ export default function AdminPanel() {
       default:
         return <Dashboard stats={stats} students={students} videos={videos} classes={classes} />;
     }
+  };
+  // Handler for when students are added
+  const handleStudentsAdded = (newStudents) => {
+    setStudents(prev => [...prev, ...newStudents]);
   };
 
   return (
