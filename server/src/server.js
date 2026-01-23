@@ -14,20 +14,36 @@ import adminRoutes from "./routes/AdminRoutes.js";
 import paymentRoutes from "./routes/PaymentRoutes.js"
 import path from "path";
 import { dailyAttendanceJob, weeklyAttendanceJob } from "./cron/attendanceCron.js";
-
+dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// ✅ 1. CORS MUST BE FIRST
+const allowedOrigins = [
+  "https://mjdclasses.in",
+  "https://www.mjdclasses.in",
+  "http://localhost:3000"
+];
+
 app.use(
   cors({
-    origin: ["https://mjdclasses.in", "https://www.mjdclasses.in", "http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+      // allow server-to-server / curl / postman
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("CORS not allowed"), false);
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
 
-app.use(cors())
+// ✅ Preflight support
+app.options("*", cors());
+
 // Socket.io config
 const io = new Server(server, {
   cors: {
@@ -45,7 +61,7 @@ io.on("connection", (socket) => {
   });
 });
 
-dotenv.config();
+
 app.use(express.json());
 app.use(bodyParser.json());
 
@@ -73,6 +89,6 @@ app.use("/api/payment", paymentRoutes)
 //WeeklyAttendance update
 weeklyAttendanceJob()
 // Server listen
-server.listen(process.env.PORT || 5000, () => {
+server.listen(process.env.PORT || 5000, "0.0.0.0", () => {
   console.log(`listen port ${process.env.PORT}`);
 });
