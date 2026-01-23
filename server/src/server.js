@@ -41,8 +41,6 @@ app.use(
   })
 );
 
-// ✅ Preflight support
-app.options("*", cors());
 
 // Socket.io config
 const io = new Server(server, {
